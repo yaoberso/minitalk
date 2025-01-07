@@ -6,7 +6,7 @@
 /*   By: yaoberso <yaoberso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 13:02:13 by yaoberso          #+#    #+#             */
-/*   Updated: 2024/10/21 10:52:33 by yaoberso         ###   ########.fr       */
+/*   Updated: 2025/01/07 10:57:54 by yaoberso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	ft_putstr(const char *str)
 	if (str == NULL)
 	{
 		write(1, "(null)", 6);
-		return (6);
+		return (0);
 	}
 	while (str[i] != '\0')
 	{
