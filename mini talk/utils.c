@@ -6,27 +6,36 @@
 /*   By: yaoberso <yaoberso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 14:21:37 by yaoberso          #+#    #+#             */
-/*   Updated: 2025/01/07 14:26:22 by yaoberso         ###   ########.fr       */
+/*   Updated: 2025/01/15 10:55:21 by yaoberso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void	init_str(char **str)
+int	init_str(char **str)
 {
-	*str = malloc(2);
-	if (*str)
-		(*str)[0] = '\0';
+	*str = malloc(sizeof(char) * 2);
+	if (!*str)
+		return (0);
+	(*str)[0] = '\0';
+	(*str)[1] = '\0';
+	return (1);
 }
 
 void	handle_end_of_message(char *str)
 {
+	if (!str)
+	{
+		return ;
+	}
 	ft_printf("%s\n", str);
 	free(str);
 }
 
 void	update_byte(char *byte, int sig, int *i)
 {
+	if (!byte || !i)
+		return ;
 	if (sig == SIGUSR1)
 		*byte |= (1 << (7 - *i));
 	(*i)++;
@@ -34,6 +43,8 @@ void	update_byte(char *byte, int sig, int *i)
 
 void	add_byte_to_str(char *str, char byte, int *j)
 {
+	if (!str || !j || *j < 0)
+		return ;
 	str[*j] = byte;
 	str[*j + 1] = '\0';
 	(*j)++;
@@ -41,12 +52,16 @@ void	add_byte_to_str(char *str, char byte, int *j)
 
 void	manage_realloc(char **str, int j)
 {
-	char *temp = ft_monrealloc(*str, j + 1);
+	char	*temp;
+
+	if (!str || !*str || j < 0)
+		return ;
+	temp = ft_monrealloc(*str, j + 1);
 	if (!temp)
 	{
 		free(*str);
 		*str = NULL;
+		return ;
 	}
-	else
-		*str = temp;
+	*str = temp;
 }

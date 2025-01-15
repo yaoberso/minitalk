@@ -19,7 +19,7 @@ CFLAGS = -Wall -Wextra -Werror -g -Iprintf
 CC = gcc
 
 # Fichiers sources
-SERVER_SRC = serveur.c printf/ft_printf.c printf/ft_putchar.c printf/ft_puthex_lower.c \
+SERVER_SRC = utils.c serveur.c printf/ft_printf.c printf/ft_putchar.c printf/ft_puthex_lower.c \
              printf/ft_puthex_upper.c printf/ft_putnbr.c printf/ft_putpointer.c printf/ft_putstr.c \
              printf/ft_putunsint.c
 

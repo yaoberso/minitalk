@@ -6,7 +6,7 @@
 /*   By: yaoberso <yaoberso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 20:54:18 by yann              #+#    #+#             */
-/*   Updated: 2025/01/07 14:28:02 by yaoberso         ###   ########.fr       */
+/*   Updated: 2025/01/15 11:53:10 by yaoberso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,73 +15,71 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static char	*ft_monrealloc(char *str, int new_size)
+char	*ft_monrealloc(char *str, int new_size)
 {
 	char	*newstr;
 	int		i;
 
-	i = 0;
-	newstr = malloc(sizeof(char) * (new_size + 1));
-	if (newstr == NULL)
+	if (!str)
+		return (NULL);
+	if (new_size <= 0)
 	{
+		free(str);
 		return (NULL);
 	}
-	while (str[i] != '\0')
+	newstr = malloc(sizeof(char) * (new_size + 1));
+	if (!newstr)
+	{
+		free(str);
+		return (NULL);
+	}
+	i = 0;
+	while (str[i] != '\0' && i < new_size)
 	{
 		newstr[i] = str[i];
 		i++;
 	}
-	newstr[new_size] = '\0';
+	newstr[i] = '\0';
 	free(str);
 	return (newstr);
 }
 
+void	process_byte(t_process *p)
+{
+	if (p->byte == '\0')
+	{
+		handle_end_of_message(*p->str);
+		*p->str = NULL;
+		*p->j = 0;
+		*p->i = 0;
+		*p->byte_ref = 0;
+		return ;
+	}
+	add_byte_to_str(*p->str, p->byte, p->j);
+	manage_realloc(p->str, *p->j);
+	*p->i = 0;
+	*p->byte_ref = 0;
+}
+
 void	gestionnaire(int sig)
 {
-	char		*temp;
-	static int	j = 0;
-	static char	*str = NULL;
-	static int	i = 0;
-	static char	byte = 0;
+	t_process		p;
+	static int		j = 0;
+	static int		i = 0;
+	static char		*str = NULL;
+	static char		byte = 0;
 
-	if (!str)
-	{
-		str = malloc(sizeof(char) * 2);
-		if (str == NULL)
-			return ;
-		str[0] = '\0';
-	}
-	if (sig == SIGUSR1)
-		byte |= (1 << (7 - i));
-	i++;
+	if (!str && !init_str(&str))
+		return ;
+	update_byte(&byte, sig, &i);
 	if (i == 8)
 	{
-		if (byte == '\0')
-		{
-			ft_printf("%s\n", str);
-			free(str);
-			str = NULL;
-			j = 0;
-			i = 0;
-			byte = 0;
-			return ;
-		}
-		else
-		{
-			str[j] = byte;
-			str[j + 1] = '\0';
-			j++;
-			temp = ft_monrealloc(str, j + 1);
-			if (temp == NULL)
-			{
-				free(str);
-				str = NULL;
-				return ;
-			}
-			str = temp;
-		}
-		i = 0;
-		byte = 0;
+		p.str = &str;
+		p.byte = byte;
+		p.j = &j;
+		p.i = &i;
+		p.byte_ref = &byte;
+		process_byte(&p);
 	}
 }
 
@@ -91,7 +89,7 @@ int	main(void)
 
 	sa.sa_handler = gestionnaire;
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
+	sa.sa_flags = SA_RESTART;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	ft_printf("pid du serveur : %i\n", getpid());

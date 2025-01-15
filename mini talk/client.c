@@ -6,7 +6,7 @@
 /*   By: yaoberso <yaoberso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 21:44:12 by yann              #+#    #+#             */
-/*   Updated: 2025/01/07 13:35:18 by yaoberso         ###   ########.fr       */
+/*   Updated: 2025/01/15 11:30:38 by yaoberso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	envoyer_bit(int pid, char bit)
 			exit(1);
 		}
 	}
-	usleep(600);
+	usleep(300);
 }
 
 void	envoyer_message(int pid, char *message)
